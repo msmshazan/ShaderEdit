@@ -18,6 +18,7 @@ using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using System.Xml;
+using System.ComponentModel;
 
 namespace ShaderEdit
 {
@@ -32,15 +33,19 @@ namespace ShaderEdit
 
         public HLSLEditor()
         {
+            bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
             InitializeComponent();
-            FileName = "pixelshader.fx";
-            var resourcename = Assembly.GetExecutingAssembly().GetManifestResourceNames().Single(x => x.EndsWith("HLSL.xshd"));
-            var reader = XmlReader.Create(new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcename)));
-            IHighlightingDefinition hlslsyntax = HighlightingLoader.Load(reader, HighlightingManager.Instance);
-            HighlightingManager.Instance.RegisterHighlighting("HLSL", new string[] { ".fx", ".fxh", ".hlsl" }, hlslsyntax);
-            Editor.Background = Brushes.DarkSlateGray;
-            Editor.SyntaxHighlighting = hlslsyntax;
-            LoadFile();
+            if (!designMode)
+            {
+                FileName = "pixelshader.fx";
+                var resourcename = Assembly.GetExecutingAssembly().GetManifestResourceNames().Single(x => x.EndsWith("HLSL.xshd"));
+                var reader = XmlReader.Create(new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcename)));
+                IHighlightingDefinition hlslsyntax = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+                HighlightingManager.Instance.RegisterHighlighting("HLSL", new string[] { ".fx", ".fxh", ".hlsl" }, hlslsyntax);
+                Editor.Background = Brushes.DarkSlateGray;
+                Editor.SyntaxHighlighting = hlslsyntax;
+                Editor.Loaded += (o, e) => { LoadFile(); };
+            }
         }
 
         public void LoadFile()

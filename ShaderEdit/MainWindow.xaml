@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShaderEdit"
+        xmlns:avdock="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:AvalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
         mc:Ignorable="d"
         Title="ShaderEdit" Height="450" Width="800">
@@ -19,19 +20,21 @@
                          Margin="5"
                          SnapsToDevicePixels="True"                         
                          Stretch="Fill" />
-        <Grid Grid.Column="1" Grid.Row="0" SnapsToDevicePixels="True" >
-            <DockPanel LastChildFill="True">
-                <Menu DockPanel.Dock="Top">
+        <Grid Grid.Column="1" Grid.Row="0" SnapsToDevicePixels="True" ShowGridLines="True" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height="20"></RowDefinition>
+            </Grid.RowDefinitions>
+                <Menu Grid.Row="0">
                     <MenuItem Header="_File"></MenuItem>
                     <MenuItem Header="_Save" Click="Menu_Save"></MenuItem>   
                     <MenuItem Header="_Exit"></MenuItem>   
                 </Menu>
-                <StackPanel/>
-                <local:HLSLEditor x:Name="ShaderEditor" Height="375" DockPanel.Dock="Top"/>
-                <StatusBar DockPanel.Dock="Top" >
+                <local:HLSLEditor x:Name="ShaderEditor" Grid.Row="1" />
+                <StatusBar Grid.Row="2" >
                     <StatusBarItem >Status:</StatusBarItem>
                 </StatusBar>
-            </DockPanel>
             </Grid>
     </Grid>
 </Window>
