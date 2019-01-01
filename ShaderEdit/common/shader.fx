@@ -44,6 +44,10 @@
 #define DECLARE_TEXTURE(Name, index) \
     sampler2D Name : register(s##index);
 
+
+#define DECLARE_TEXTURE2D(Name, index) \
+    sampler2D Name : register(s##index);
+
 #define DECLARE_CUBEMAP(Name, index) \
     samplerCUBE Name : register(s##index);
 
@@ -54,10 +58,17 @@
 #endif
 
 
-DECLARE_TEXTURE(Texture, 0);
+DECLARE_TEXTURE(Channel0, 0);
+DECLARE_TEXTURE(Channel1, 1);
+DECLARE_TEXTURE(Channel2, 2);
+DECLARE_TEXTURE(Channel3, 3);
 
 
 BEGIN_CONSTANTS
+
+float4 Date;
+float3 Resolution;
+float Time;
 MATRIX_CONSTANTS
 
     float4x4 MatrixTransform    _vs(c0) _cb(c0);

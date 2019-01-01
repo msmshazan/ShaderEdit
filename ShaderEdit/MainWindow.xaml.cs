@@ -28,6 +28,12 @@ namespace ShaderEdit
         private void Menu_Save(object sender, RoutedEventArgs e)
         {
             ShaderEditor.SaveFile();
+            D3DContext.UpdateShader();
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

@@ -37,14 +37,28 @@ namespace ShaderEdit
             InitializeComponent();
             if (!designMode)
             {
-                FileName = "pixelshader.fx";
                 var resourcename = Assembly.GetExecutingAssembly().GetManifestResourceNames().Single(x => x.EndsWith("HLSL.xshd"));
                 var reader = XmlReader.Create(new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcename)));
                 IHighlightingDefinition hlslsyntax = HighlightingLoader.Load(reader, HighlightingManager.Instance);
                 HighlightingManager.Instance.RegisterHighlighting("HLSL", new string[] { ".fx", ".fxh", ".hlsl" }, hlslsyntax);
                 Editor.Background = Brushes.DarkSlateGray;
                 Editor.SyntaxHighlighting = hlslsyntax;
-                Editor.Loaded += (o, e) => { LoadFile(); };
+                var templateCode = @"
+float4 mainImage(float2 texCoord)
+{
+	// Normalized pixel coordinates (from 0 to 1)
+    float2 uv = texCoord/Resolution.xy;
+
+    // Time varying pixel color
+    float3 col = 0.5 + 0.5*cos(Time+uv.xyx+float3(0,2,4));
+
+    // Output to screen
+    return float4(col,1.0);
+}";
+                Editor.Text = templateCode;
+                if (!Directory.Exists("temp")) Directory.CreateDirectory("temp");
+                FileName = "temp/pixelshader.fx";
+                SaveFile();
             }
         }
 

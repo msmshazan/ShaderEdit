@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.Xna.Framework;
@@ -19,7 +20,6 @@ namespace ShaderEdit
     /// </summary>
     public class D3D11Host : Image
     {
-        #region Fields
         // The Direct3D 11 device (shared by all D3D11Host elements):
         private static GraphicsDevice _graphicsDevice;
         private static int _referenceCount;
@@ -33,9 +33,7 @@ namespace ShaderEdit
         // Render timing:
         private readonly Stopwatch _timer;
         private TimeSpan _lastRenderingTime;
-        #endregion
 
-        #region Properties
         /// <summary>
         /// Gets a value indicating whether the controls runs in the context of a designer (e.g.
         /// Visual Studio Designer or Expression Blend).
@@ -65,10 +63,7 @@ namespace ShaderEdit
         {
             get { return _graphicsDevice; }
         }
-        #endregion
 
-
-        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="D3D11Host"/> class.
         /// </summary>
@@ -78,10 +73,8 @@ namespace ShaderEdit
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
         }
-        #endregion
 
-
-        #region Methods
+        
         private void OnLoaded(object sender, RoutedEventArgs eventArgs)
         {
             if (IsInDesignMode)
@@ -255,140 +248,157 @@ namespace ShaderEdit
             }
         }
 
+        
 
-        #region ----- Shader Scene -----
-
-        // Source: http://msdn.microsoft.com/en-us/library/bb203926(v=xnagamestudio.40).aspx
-
-        // Note: This is just an example. To improve the D3D11Host make the methods 
-        // Initialize(), Unitialize(), and Render() protected virtual or call an 
-        // external "renderer".
-
-        private bool CompileShader(string FileName,out string CompileError)
+        private bool CompileShader(out string CompileError)
         {
-            ProcessStartInfo processStartInfo = new ProcessStartInfo("tools/2MGFX.exe",$"{FileName}.fx {FileName}.dx11 /Profile:DirectX_11 /Debug");
-            processStartInfo.UseShellExecute = false;
-            processStartInfo.CreateNoWindow = true;
-            processStartInfo.RedirectStandardOutput = true;
-            processStartInfo.RedirectStandardError = true;
-            var process = Process.Start(processStartInfo);
-            CompileError = "";
-            while (!process.StandardOutput.EndOfStream)
-            {
-                CompileError += process.StandardOutput.ReadLine();
-            }
-
+            var MainShaderCode = File.ReadAllText("common/shader.fx");
+            if (!Directory.Exists("temp")) Directory.CreateDirectory("temp");
+            File.WriteAllText("temp/tempshader.fx",MainShaderCode);
             bool error = false;
-            while (!process.StandardError.EndOfStream)
+            CompileError = "";
+            if (File.Exists("temp/pixelshader.fx"))
             {
-                error = true;
-                CompileError += process.StandardError.ReadLine();
+                ProcessStartInfo processStartInfo = new ProcessStartInfo("tools/2MGFX.exe", "temp/tempshader.fx temp/tempshader.dx11 /Profile:DirectX_11 /Debug");
+                processStartInfo.UseShellExecute = false;
+                processStartInfo.CreateNoWindow = true;
+                processStartInfo.RedirectStandardOutput = true;
+                processStartInfo.RedirectStandardError = true;
+                var process = Process.Start(processStartInfo);
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    CompileError += process.StandardOutput.ReadLine();
+                }
+
+                while (!process.StandardError.EndOfStream)
+                {
+                    error = true;
+                    CompileError += process.StandardError.ReadLine();
+                }
+                process.WaitForExit();
             }
-            process.WaitForExit();
+            else
+            {
+                CompileError = "file not found / saved";
+            }
             return error == true ? false : true;
         }
 
-        Effect Shader;
-        VertexBuffer VertexBuffer;
-        IndexBuffer IndexBuffer;
-        Vector3     Resolution;           // viewport resolution (in pixels)
+        private Effect Shader;
+        private VertexBuffer VertexBuffer;
+        private IndexBuffer IndexBuffer;
+
+
+        // Uniforms
+        Vector3  Resolution;           // viewport resolution (in pixels)
         float Time;                 // shader playback time (in seconds)
         float TimeDelta;            // render time (in seconds)
-        int Frame;                // shader playback frame
-        float iChannelTime0;       // channel playback time (in seconds)
-        float iChannelTime1;       // channel playback time (in seconds)
-        float iChannelTime2;       // channel playback time (in seconds)
-        float iChannelTime3;       // channel playback time (in seconds)
-        Vector3 iChannelResolution0; // channel resolution (in pixels)
-        Vector3 iChannelResolution1; // channel resolution (in pixels)
-        Vector3 iChannelResolution2; // channel resolution (in pixels)
-        Vector3 iChannelResolution3; // channel resolution (in pixels)
+        // int Frame;                // shader playback frame
+       // float iChannelTime0;       // channel playback time (in seconds)
+       // float iChannelTime1;       // channel playback time (in seconds)
+       // float iChannelTime2;       // channel playback time (in seconds)
+      //  float iChannelTime3;       // channel playback time (in seconds)
+       // Vector3 iChannelResolution0; // channel resolution (in pixels)
+       // Vector3 iChannelResolution1; // channel resolution (in pixels)
+       // Vector3 iChannelResolution2; // channel resolution (in pixels)
+       // Vector3 iChannelResolution3; // channel resolution (in pixels)
        Vector4  Mouse;                // mouse pixel coords. xy: current (if MLB down), zw: click
-       Texture iChannel0;          // input channel. XX = 2D/Cube
-       Texture iChannel1;          // input channel. XX = 2D/Cube
-       Texture iChannel2;          // input channel. XX = 2D/Cube
-       Texture iChannel3;          // input channel. XX = 2D/Cube
-       Vector4      Date;                 // (year, month, day, time in seconds)
-        float SampleRate;           // sound sample rate (i.e., 44100)
-        DateTime FileLastWriteTime;
-        string ShaderName = "shader";
+        Texture Channel0;          // input channel. XX = 2D/Cube
+       // Texture iChannel1;          // input channel. XX = 2D/Cube
+       // Texture iChannel2;          // input channel. XX = 2D/Cube
+       // Texture iChannel3;          // input channel. XX = 2D/Cube
+        Vector4      Date;                 // (year, month, day, time in seconds)
+        // float SampleRate;           // sound sample rate (i.e., 44100)
+
+        DateTime LastShaderWriteTime;
+        
+        private void UpdateUniforms(float totalseconds)
+        {
+            Date = new Vector4(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,(float)DateTime.Now.TimeOfDay.TotalSeconds);
+            TimeDelta = totalseconds - Time;
+            Time = totalseconds;
+            Resolution = new Vector3(GraphicsDevice.PresentationParameters.Bounds.Size.ToVector2(),1.0f);
+            if (Channel0 == null) Channel0 = Texture2D.FromStream(GraphicsDevice, File.OpenRead("assets/textures/test.png"));
+        }
+
+        private void SetUniforms(Effect shader)
+        {
+            if(shader != null)
+            {
+                if (Shader.Parameters.Any(x => x.Name == "Time")) Shader.Parameters["Time"].SetValue(Time);
+                if (Shader.Parameters.Any(x => x.Name == "Date")) Shader.Parameters["Date"].SetValue(Date);
+                if (Shader.Parameters.Any(x => x.Name == "Resolution")) Shader.Parameters["Resolution"].SetValue(Resolution);
+                if (Shader.Parameters.Any(x => x.Name == "Texture")) Shader.Parameters["Texture"].SetValue(Channel0);
+                if (Shader.Parameters.Any(x => x.Name == "MatrixTransform")) Shader.Parameters["MatrixTransform"].SetValue(Matrix.Identity);
+
+            }
+        }
+
         private void Initialize()
         {
-            var FileName = $"{ShaderName}.fx";
-            CompileShader(ShaderName, out var error);
-            FileLastWriteTime =  File.GetLastWriteTimeUtc("pixelshader.fx");
-            var texture = Texture2D.FromStream(GraphicsDevice,File.OpenRead("assets/textures/test.png"));
-            var shaderbinary = File.ReadAllBytes($"{ShaderName}.dx11");
-            Shader = new Effect(GraphicsDevice,shaderbinary);
-            Shader.Parameters["Texture"].SetValue(texture);
-            Shader.Parameters["MatrixTransform"].SetValue(Matrix.Identity);
-            VertexBuffer = new VertexBuffer(GraphicsDevice, VertexPositionColorTexture.VertexDeclaration,4,BufferUsage.None);
+            UpdateUniforms(0);
+            VertexBuffer = new VertexBuffer(GraphicsDevice, VertexPositionColorTexture.VertexDeclaration, 4, BufferUsage.None);
             IndexBuffer = new IndexBuffer(GraphicsDevice, IndexElementSize.ThirtyTwoBits, 6, BufferUsage.None);
             var vertices = new VertexPositionColorTexture[4];
-            vertices[0] = new VertexPositionColorTexture(new Vector3(-1,-1,0),Color.White,new Vector2(0,1));
-            vertices[1] = new VertexPositionColorTexture(new Vector3(1,1,0),Color.White,new Vector2(1,0));
-            vertices[2] = new VertexPositionColorTexture(new Vector3(-1,1,0),Color.White,new Vector2(0,0));
-            vertices[3] = new VertexPositionColorTexture(new Vector3(1,-1,0),Color.White,new Vector2(1,1));
+            vertices[0] = new VertexPositionColorTexture(new Vector3(-1, -1, 0), Color.White, new Vector2(0, 1));
+            vertices[1] = new VertexPositionColorTexture(new Vector3(1, 1, 0), Color.White, new Vector2(1, 0));
+            vertices[2] = new VertexPositionColorTexture(new Vector3(-1, 1, 0), Color.White, new Vector2(0, 0));
+            vertices[3] = new VertexPositionColorTexture(new Vector3(1, -1, 0), Color.White, new Vector2(1, 1));
             var indices = new int[] { 0, 2, 1, 0, 3, 1 };
             VertexBuffer.SetData(vertices);
             IndexBuffer.SetData(indices);
+            if(CompileShader( out var error))
+            {
+                var shaderbinary = File.ReadAllBytes($"temp/tempshader.dx11");
+                Shader = new Effect(GraphicsDevice, shaderbinary);
+                SetUniforms(Shader);
+            }
         }
-
-
-        private bool CheckIfShaderChanged()
-        {
-           var FileWriteTime = File.GetLastWriteTimeUtc("pixelshader.fx");
-           if(FileWriteTime > FileLastWriteTime)
-           {
-                return true;
-           }
-           return false;
-        }
-
+       
         private void Unitialize()
         {
             
         }
 
-        private void UpdateShader()
+        public void UpdateShader()
         {
-            if (CheckIfShaderChanged())
+            if (CompileShader(out var error))
             {
-                var FileName = $"{ShaderName}.fx";
-                CompileShader(ShaderName, out var error);
-                var texture = Texture2D.FromStream(GraphicsDevice, File.OpenRead("assets/textures/test.png"));
-                var shaderbinary = File.ReadAllBytes($"{ShaderName}.dx11");
-                Shader.Dispose();
-                Shader = new Effect(GraphicsDevice, shaderbinary);
-                Shader.Parameters["Texture"].SetValue(texture);
-                Shader.Parameters["MatrixTransform"].SetValue(Matrix.Identity);
+                    var shaderbinary = File.ReadAllBytes("temp/tempshader.dx11");
+                    if(Shader != null) Shader.Dispose();
+                    Shader = null;
+                    Shader = new Effect( GraphicsDevice, shaderbinary);
+                    if (Shader.Parameters.Any(x => x.Name == "Texture")) Shader.Parameters["Texture"].SetValue(Channel0);
+                    if (Shader.Parameters.Any(x => x.Name == "MatrixTransform")) Shader.Parameters["MatrixTransform"].SetValue(Matrix.Identity);
             }
-
+         
         }
 
         private void Render(TimeSpan time)
         {
-            UpdateShader();
+            var totalseconds = (float)time.TotalSeconds;
+            UpdateUniforms(totalseconds);
+            SetUniforms(Shader);
             GraphicsDevice.Clear(Color.SteelBlue);
             GraphicsDevice.SamplerStates[0] = new SamplerState() {
-                AddressU = TextureAddressMode.Wrap ,
-                AddressV = TextureAddressMode.Wrap ,
+                AddressU = TextureAddressMode.Wrap,
+                AddressV = TextureAddressMode.Wrap,
                 AddressW = TextureAddressMode.Wrap,
                 Filter = TextureFilter.Point   };
             GraphicsDevice.RasterizerState = RasterizerState.CullNone;
             GraphicsDevice.SetVertexBuffer(VertexBuffer);
             GraphicsDevice.Indices = IndexBuffer;
-            foreach (var Technique in Shader.Techniques)
+            if (Shader != null)
             {
-                foreach (var Pass in Technique.Passes)
+                foreach (var Technique in Shader.Techniques)
                 {
-                    Pass.Apply();
-                    GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
+                    foreach (var Pass in Technique.Passes)
+                    {
+                        Pass.Apply();
+                        GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
+                    }
                 }
             }
         }
-        #endregion
-
-        #endregion
     }
 }

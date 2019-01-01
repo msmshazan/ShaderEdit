@@ -9,32 +9,30 @@
         mc:Ignorable="d"
         Title="ShaderEdit" Height="450" Width="800">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="20"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+                <MenuItem Header="_Save" Click="Menu_Save" ></MenuItem>
+                <MenuItem Header="_Exit" Click="Exit_Click"></MenuItem>
+        </Menu>
+        <StatusBar Grid.Row="2" >
+            <StatusBarItem >Status:</StatusBarItem>
+        </StatusBar>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
 
-        <local:D3D11Host x:Name="Host0"
-                         Grid.Row="0"
+            <local:D3D11Host x:Name="D3DContext"
                          Grid.Column="0"
                          Margin="5"
                          SnapsToDevicePixels="True"                         
                          Stretch="Fill" />
-        <Grid Grid.Column="1" Grid.Row="0" SnapsToDevicePixels="True" ShowGridLines="True" >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="20"></RowDefinition>
-                <RowDefinition></RowDefinition>
-                <RowDefinition Height="20"></RowDefinition>
-            </Grid.RowDefinitions>
-                <Menu Grid.Row="0">
-                    <MenuItem Header="_File"></MenuItem>
-                    <MenuItem Header="_Save" Click="Menu_Save"></MenuItem>   
-                    <MenuItem Header="_Exit"></MenuItem>   
-                </Menu>
-                <local:HLSLEditor x:Name="ShaderEditor" Grid.Row="1" />
-                <StatusBar Grid.Row="2" >
-                    <StatusBarItem >Status:</StatusBarItem>
-                </StatusBar>
-            </Grid>
+            <local:HLSLEditor x:Name="ShaderEditor" Grid.Column="1"/>
+        </Grid>
     </Grid>
-</Window>
+   </Window>
