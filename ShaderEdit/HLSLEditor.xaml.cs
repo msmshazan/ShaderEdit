@@ -41,7 +41,8 @@ namespace ShaderEdit
                 var reader = XmlReader.Create(new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcename)));
                 IHighlightingDefinition hlslsyntax = HighlightingLoader.Load(reader, HighlightingManager.Instance);
                 HighlightingManager.Instance.RegisterHighlighting("HLSL", new string[] { ".fx", ".fxh", ".hlsl" }, hlslsyntax);
-                Editor.Background = Brushes.DarkSlateGray;
+                Editor.Background = new SolidColorBrush(Color.FromRgb(22,22,22));
+                Editor.Foreground = Brushes.White;
                 Editor.SyntaxHighlighting = hlslsyntax;
                 var templateCode = @"
 float4 mainImage(float2 texCoord)
