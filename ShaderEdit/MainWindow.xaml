@@ -1,26 +1,37 @@
-﻿<Window x:Class="ShaderEdit.MainWindow"
+﻿<modern:ModernWindow x:Class="ShaderEdit.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShaderEdit"
+        xmlns:modern="clr-namespace:ModernChrome;assembly=ModernChrome"
         xmlns:avdock="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:AvalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
         mc:Ignorable="d"
-        Title="ShaderEdit" Height="450" Width="800">
+        Title="ShaderEdit" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <modern:ModernWindow.CaptionIcon>
+        <Path SnapsToDevicePixels="True" Stretch="UniformToFill" UseLayoutRounding="True"
+              Fill="{Binding Path=(TextBlock.Foreground), NotifyOnValidationError=True, RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"
+               Data="m 755 2696 c -41 -18 -83 -69 -90 -109 -3 -18 -4 -265 -3 -549 l 3 -517 88 66 87 65 v 888 l 458 -2 457 -3 3 -272 2 -273 h 540 V 1345 700 h -159 -158 l -30 -82 -29 -83 213 -3 c 245 -3 266 2 311 71 l 27 41 3 762 2 763 -302 271 -303 270 h -545 c -430 -1 -551 -4 -575 -14 z M 1293 1601 940 1575 594 1315 C 403 1172 243 1052 237 1048 231 1045 339 867 494 626 641 397 762 210 763 210 c 1 0 200 -14 442 -30 241 -16 443 -26 446 -22 4 4 60 151 123 326 l 116 319 -55 391 c -30 215 -58 401 -60 414 -5 20 -11 22 -68 21 -34 -1 -221 -13 -414 -28 z m 357 -86 c 0 -3 -79 -111 -176 -240 L 1298 1040 H 852 c -261 0 -442 4 -437 9 6 5 139 103 297 219 l 287 210 303 20 c 167 11 313 20 326 21 12 0 22 -1 22 -4 z m 113 -393 c 26 -147 47 -274 47 -282 0 -19 -163 -460 -170 -460 -9 0 -222 589 -218 603 4 17 281 407 289 407 3 0 27 -120 52 -268 z M 1421 606 c 65 -171 117 -311 116 -312 -5 -5 -715 31 -720 36 -10 13 -347 579 -347 584 0 4 187 5 416 4 l 416 -3 z"
+              >
+            <Path.RenderTransform>
+                <TransformGroup>
+                <ScaleTransform ScaleX="0.01" ScaleY="0.01"></ScaleTransform>
+                <ScaleTransform ScaleX="1" ScaleY="-1" CenterX=".5" />
+                    <TranslateTransform Y="22"></TranslateTransform>
+                </TransformGroup>
+            </Path.RenderTransform>
+        </Path>
+    </modern:ModernWindow.CaptionIcon>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"></RowDefinition>
             <RowDefinition></RowDefinition>
-            <RowDefinition Height="20"></RowDefinition>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
                 <MenuItem Header="_Save" Click="Menu_Save" ></MenuItem>
                 <MenuItem Header="_Exit" Click="Exit_Click"></MenuItem>
         </Menu>
-        <StatusBar Grid.Row="2" >
-            <StatusBarItem >Status:</StatusBarItem>
-        </StatusBar>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -35,4 +46,7 @@
             <local:HLSLEditor x:Name="ShaderEditor" Grid.Column="1"/>
         </Grid>
     </Grid>
-   </Window>
+    <modern:ModernWindow.StatusBar>
+        <TextBlock VerticalAlignment="Center"> Status:</TextBlock>
+    </modern:ModernWindow.StatusBar>
+   </modern:ModernWindow>

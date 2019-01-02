@@ -109,8 +109,8 @@
     <PackageReference Include="AvalonEdit">
       <Version>5.0.4</Version>
     </PackageReference>
-    <PackageReference Include="Extended.Wpf.Toolkit">
-      <Version>3.4.0</Version>
+    <PackageReference Include="ModernChrome">
+      <Version>1.0.0-alpha001</Version>
     </PackageReference>
     <PackageReference Include="MonoGame.Framework.WindowsDX">
       <Version>3.7.1.189</Version>

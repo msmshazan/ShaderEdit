@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ModernChrome;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,11 +19,14 @@ namespace ShaderEdit
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : ModernWindow
     {
         public MainWindow()
         {
             InitializeComponent();
+            ShowCaptionIcon = true;
+            ThemeManager.ChangeTheme(App.Current, "Blend");
+            BorderBrush = Application.Current.FindResource("StatusBarPurpleBrushKey") as SolidColorBrush;
         }
 
         private void Menu_Save(object sender, RoutedEventArgs e)
