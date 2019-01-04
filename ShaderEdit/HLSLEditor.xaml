@@ -8,6 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <AvalonEdit:TextEditor x:Name="CodeEditor" FontSize="10pt" FontFamily="Liberation-Mono"/>
+        <AvalonEdit:TextEditor x:Name="CodeEditor" FontSize="10pt" FontFamily="Liberation-Mono">
+        </AvalonEdit:TextEditor>
     </Grid>
 </UserControl>

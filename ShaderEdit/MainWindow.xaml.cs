@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
 
 namespace ShaderEdit
 {
@@ -25,9 +26,10 @@ namespace ShaderEdit
         {
             InitializeComponent();
             ShowCaptionIcon = true;
-            ThemeManager.ChangeTheme(App.Current, "Blend");
+            ThemeManager.ChangeTheme(Application.Current, "Blend");
             BorderBrush = Application.Current.FindResource("StatusBarPurpleBrushKey") as SolidColorBrush;
         }
+        
 
         private void Menu_Save(object sender, RoutedEventArgs e)
         {

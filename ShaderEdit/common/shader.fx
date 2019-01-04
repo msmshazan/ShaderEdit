@@ -41,11 +41,9 @@
 #define _ps(r)  : register(ps, r)
 #define _cb(r)
 
+
+
 #define DECLARE_TEXTURE(Name, index) \
-    sampler2D Name : register(s##index);
-
-
-#define DECLARE_TEXTURE2D(Name, index) \
     sampler2D Name : register(s##index);
 
 #define DECLARE_CUBEMAP(Name, index) \

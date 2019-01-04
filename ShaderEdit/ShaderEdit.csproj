@@ -55,6 +55,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="ChildWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="HLSLEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -67,9 +71,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="D3D11Host.cs" />
-    <Compile Include="D3D11Image.cs" />
-    <Compile Include="D3D9.cs" />
+    <Compile Include="ChildWindow.xaml.cs">
+      <DependentUpon>ChildWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomInterTabClient.cs" />
+    <Compile Include="GraphicsContext.cs" />
     <Compile Include="HLSLEditor.xaml.cs">
       <DependentUpon>HLSLEditor.xaml</DependentUpon>
     </Compile>
@@ -109,11 +115,17 @@
     <PackageReference Include="AvalonEdit">
       <Version>5.0.4</Version>
     </PackageReference>
+    <PackageReference Include="Dragablz">
+      <Version>0.0.3.203</Version>
+    </PackageReference>
     <PackageReference Include="ModernChrome">
       <Version>1.0.0-alpha001</Version>
     </PackageReference>
     <PackageReference Include="MonoGame.Framework.WindowsDX">
       <Version>3.7.1.189</Version>
+    </PackageReference>
+    <PackageReference Include="MonoGame.Framework.WpfInterop">
+      <Version>1.7.1</Version>
     </PackageReference>
     <PackageReference Include="SharpDX">
       <Version>4.2.0</Version>

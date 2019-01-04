@@ -5,10 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShaderEdit"
         xmlns:modern="clr-namespace:ModernChrome;assembly=ModernChrome"
-        xmlns:avdock="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:AvalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+        xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
+        xmlns:dockablz="http://dragablz.net/winfx/xaml/dockablz"
         mc:Ignorable="d"
-        Title="ShaderEdit" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+        Title="ShaderEdit" Height="600" Width="800" WindowStartupLocation="CenterScreen" >
     <modern:ModernWindow.CaptionIcon>
         <Path SnapsToDevicePixels="True" Stretch="UniformToFill" UseLayoutRounding="True"
               Fill="{Binding Path=(TextBlock.Foreground), NotifyOnValidationError=True, RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"
@@ -23,28 +24,38 @@
             </Path.RenderTransform>
         </Path>
     </modern:ModernWindow.CaptionIcon>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20"></RowDefinition>
-            <RowDefinition></RowDefinition>
-        </Grid.RowDefinitions>
-        <Menu Grid.Row="0">
-                <MenuItem Header="_Save" Click="Menu_Save" ></MenuItem>
-                <MenuItem Header="_Exit" Click="Exit_Click"></MenuItem>
-        </Menu>
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-
-            <local:D3D11Host x:Name="D3DContext"
-                         Grid.Column="0"
-                         Margin="5"
+    <Grid Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <dragablz:TabablzControl  Grid.Column="0"   x:Name="TabablzControl" EmptyHeaderSizingHint="PreviousTab">
+            <dragablz:TabablzControl.InterTabController>
+                <dragablz:InterTabController MoveWindowWithSolitaryTabs="False">
+                    <dragablz:InterTabController.InterTabClient>
+                        <local:CustomInterTabClient/>
+                    </dragablz:InterTabController.InterTabClient>
+                </dragablz:InterTabController>
+            </dragablz:TabablzControl.InterTabController>
+            <TabItem Header="View" IsSelected="True" IsEnabled="True">
+                <local:GraphicsContext x:Name="D3DContext"
                          SnapsToDevicePixels="True"                         
-                         Stretch="Fill" />
-            <local:HLSLEditor x:Name="ShaderEditor" Grid.Column="1"/>
-        </Grid>
+                         Stretch="Fill"/>
+            </TabItem>
+        </dragablz:TabablzControl>
+        <dragablz:TabablzControl Margin="5 0 0 0" Grid.Column="1" EmptyHeaderSizingHint="PreviousTab" >
+            <dragablz:TabablzControl.InterTabController>
+                <dragablz:InterTabController MoveWindowWithSolitaryTabs="False">
+                    <dragablz:InterTabController.InterTabClient>
+                        <local:CustomInterTabClient/>
+                    </dragablz:InterTabController.InterTabClient>
+                </dragablz:InterTabController>
+            </dragablz:TabablzControl.InterTabController>
+            <TabItem Header="Editor" IsSelected="True">
+                <local:HLSLEditor x:Name="ShaderEditor" />
+            </TabItem>
+        </dragablz:TabablzControl>
+
     </Grid>
     <modern:ModernWindow.StatusBar>
         <TextBlock VerticalAlignment="Center"> Status:</TextBlock>

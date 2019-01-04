@@ -35,6 +35,9 @@ namespace ShaderEdit
         {
             bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
             InitializeComponent();
+            RoutedCommand SaveCommand = new RoutedCommand();
+            SaveCommand.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control));
+            Editor.CommandBindings.Add(new CommandBinding(SaveCommand,(o,e)=> { SaveFile(); }));
             if (!designMode)
             {
                 var resourcename = Assembly.GetExecutingAssembly().GetManifestResourceNames().Single(x => x.EndsWith("HLSL.xshd"));
@@ -49,9 +52,9 @@ float4 mainImage(float2 texCoord)
 {
 	// Normalized pixel coordinates (from 0 to 1)
     float2 uv = texCoord/Resolution.xy;
-
+    float3 texel = SAMPLE_TEXTURE(Channel0,texCoord).xyz;
     // Time varying pixel color
-    float3 col = 0.5 + 0.5*cos(Time+uv.xyx+float3(0,2,4));
+    float3 col = 0.5 + texel+ 0.5*cos(Time+uv.xyx+float3(0,2,4));
 
     // Output to screen
     return float4(col,1.0);
@@ -72,5 +75,6 @@ float4 mainImage(float2 texCoord)
         {
             Editor.Save(FileName);
         }
+        
     }
 }
