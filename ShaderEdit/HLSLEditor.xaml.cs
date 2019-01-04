@@ -52,7 +52,7 @@ float4 mainImage(float2 texCoord)
 {
 	// Normalized pixel coordinates (from 0 to 1)
     float2 uv = texCoord/Resolution.xy;
-    float3 texel = SAMPLE_TEXTURE(Channel0,texCoord).xyz;
+    float3 texel = SAMPLE_TEXTURE2D(Channel0,texCoord).xyz;
     // Time varying pixel color
     float3 col = 0.5 + texel+ 0.5*cos(Time+uv.xyx+float3(0,2,4));
 

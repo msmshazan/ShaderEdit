@@ -13,15 +13,21 @@
 #define _ps(r)
 #define _cb(r)
 
-#define DECLARE_TEXTURE(Name, index) \
+
+#define DECLARE_TEXTURE2D(Name, index) \
     Texture2D<float4> Name : register(t##index); \
-    sampler Name##Sampler : register(s##index)
+    sampler Name##Sampler : register(s##index);
+
+#define DECLARE_TEXTURE3D(Name, index) \
+    Texture3D<float4> Name : register(t##index); \
+    sampler Name##Sampler : register(s##index);
 
 #define DECLARE_CUBEMAP(Name, index) \
     TextureCube<float4> Name : register(t##index); \
-    sampler Name##Sampler : register(s##index)
+    sampler Name##Sampler : register(s##index);
 
-#define SAMPLE_TEXTURE(Name, texCoord)  Name.Sample(Name##Sampler, texCoord)
+#define SAMPLE_TEXTURE2D(Name, texCoord)  Name.Sample(Name##Sampler, texCoord)
+#define SAMPLE_TEXTURE3D(Name, texCoord)  Name.Sample(Name##Sampler, texCoord)
 #define SAMPLE_CUBEMAP(Name, texCoord)  Name.Sample(Name##Sampler, texCoord)
 
 
@@ -43,23 +49,25 @@
 
 
 
-#define DECLARE_TEXTURE(Name, index) \
+
+#define DECLARE_TEXTURE2D(Name, index) \
     sampler2D Name : register(s##index);
+
+#define DECLARE_TEXTURE3D(Name, index) \
+    sampler3D Name : register(s##index);
 
 #define DECLARE_CUBEMAP(Name, index) \
     samplerCUBE Name : register(s##index);
 
-#define SAMPLE_TEXTURE(Name, texCoord)  tex2D(Name, texCoord)
+#define SAMPLE_TEXTURE2D(Name, texCoord)  tex2D(Name, texCoord)
+#define SAMPLE_TEXTURE3D(Name, texCoord)  tex3D(Name, texCoord)
 #define SAMPLE_CUBEMAP(Name, texCoord)  texCUBE(Name, texCoord)
 
 
 #endif
 
 
-DECLARE_TEXTURE(Channel0, 0);
-DECLARE_TEXTURE(Channel1, 1);
-DECLARE_TEXTURE(Channel2, 2);
-DECLARE_TEXTURE(Channel3, 3);
+[insert Channel defines here]
 
 
 BEGIN_CONSTANTS
@@ -77,7 +85,7 @@ END_CONSTANTS
 struct ShaderData
 {
 	float4 position		: SV_Position;
-	float4 color		: COLOR0;
+	float4 color		    : COLOR0;
     float2 texCoord		: TEXCOORD0;
 };
 
