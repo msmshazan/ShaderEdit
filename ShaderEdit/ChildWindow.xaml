@@ -1,4 +1,4 @@
-﻿<modern:ModernWindow x:Class="ShaderEdit.MainWindow"
+﻿<modern:ModernWindow x:Class="ShaderEdit.ChildWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -9,7 +9,7 @@
         xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
         xmlns:dockablz="http://dragablz.net/winfx/xaml/dockablz"
         mc:Ignorable="d"
-        Title="ShaderEdit" Height="720" Width="1280" WindowStartupLocation="CenterScreen" WindowState="Maximized" >
+        Title="ShaderEdit" Height="450" Width="800" >
     <modern:ModernWindow.CaptionIcon>
         <Path SnapsToDevicePixels="True" Stretch="UniformToFill" UseLayoutRounding="True"
               Fill="{Binding Path=(TextBlock.Foreground), NotifyOnValidationError=True, RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"
@@ -17,47 +17,23 @@
               >
             <Path.RenderTransform>
                 <TransformGroup>
-                <ScaleTransform ScaleX="0.01" ScaleY="0.01"></ScaleTransform>
-                <ScaleTransform ScaleX="1" ScaleY="-1" CenterX=".5" />
+                    <ScaleTransform ScaleX="0.01" ScaleY="0.01"></ScaleTransform>
+                    <ScaleTransform ScaleX="1" ScaleY="-1" CenterX=".5" />
                     <TranslateTransform Y="22"></TranslateTransform>
                 </TransformGroup>
             </Path.RenderTransform>
         </Path>
     </modern:ModernWindow.CaptionIcon>
-    <Grid Background="White">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <dragablz:TabablzControl  Grid.Column="0"   x:Name="TabablzControl" EmptyHeaderSizingHint="PreviousTab">
-            <dragablz:TabablzControl.InterTabController>
-                <dragablz:InterTabController MoveWindowWithSolitaryTabs="False">
-                    <dragablz:InterTabController.InterTabClient>
-                        <local:CustomInterTabClient/>
-                    </dragablz:InterTabController.InterTabClient>
-                </dragablz:InterTabController>
-            </dragablz:TabablzControl.InterTabController>
-            <TabItem Header="View" IsSelected="True" IsEnabled="True">
-                <local:GraphicsContext x:Name="D3DContext"
-                         SnapsToDevicePixels="True"                         
-                         Stretch="Fill"/>
-            </TabItem>
-        </dragablz:TabablzControl>
-        <dragablz:TabablzControl Margin="5 0 0 0" Grid.Column="1" EmptyHeaderSizingHint="PreviousTab" >
-            <dragablz:TabablzControl.InterTabController>
-                <dragablz:InterTabController MoveWindowWithSolitaryTabs="False">
-                    <dragablz:InterTabController.InterTabClient>
-                        <local:CustomInterTabClient/>
-                    </dragablz:InterTabController.InterTabClient>
-                </dragablz:InterTabController>
-            </dragablz:TabablzControl.InterTabController>
-            <TabItem Header="Editor" IsSelected="True">
-                <local:HLSLEditor x:Name="ShaderEditor" />
-            </TabItem>
-        </dragablz:TabablzControl>
-
-    </Grid>
     <modern:ModernWindow.StatusBar>
         <TextBlock VerticalAlignment="Center"> Status:</TextBlock>
     </modern:ModernWindow.StatusBar>
-   </modern:ModernWindow>
+    <dragablz:TabablzControl  x:Name="TabablzControl" EmptyHeaderSizingHint="PreviousTab">
+        <dragablz:TabablzControl.InterTabController>
+            <dragablz:InterTabController>
+                <dragablz:InterTabController.InterTabClient>
+                    <local:CustomInterTabClient/>
+                </dragablz:InterTabController.InterTabClient>
+            </dragablz:InterTabController>
+        </dragablz:TabablzControl.InterTabController>
+    </dragablz:TabablzControl>
+</modern:ModernWindow>
